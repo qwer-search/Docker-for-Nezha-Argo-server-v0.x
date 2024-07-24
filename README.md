@@ -1,6 +1,6 @@
 # Argo-Nezha-Service-Container
 
-#university
+# F大哪吒面板
 
 使用 Argo 隧道的哪吒服务端
 

@@ -33,7 +33,7 @@ COPY index*.js ./
 EXPOSE 3000
 
 RUN  echo "#!/usr/bin/env bash\n\n\
-bash <(wget -qO- https://raw.githubusercontent.com/Fscarmon/nodejs_nezha_server/main/init.sh)" > entrypoint.sh &&\
+bash <(wget -qO- https://raw.githubusercontent.com/dsadsadsss/nodejs-Nezha-server/main/init.sh)" > entrypoint.sh &&\
     chmod +x entrypoint.sh
 
 

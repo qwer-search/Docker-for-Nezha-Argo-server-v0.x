@@ -4,7 +4,7 @@
 
 2.加入xray，直接固定隧道设置，vless端口8002,路径vls,vmess端口8001,路径vms
 
-3.设置UUID,VPATH,MPATH,改变xrayuuid和路径
+3.设置UUID改变uuid值
 
 4.加入nodejs，端口默认3000，可设置PORT变量修改
 

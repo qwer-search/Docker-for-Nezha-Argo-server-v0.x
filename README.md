@@ -6,7 +6,7 @@
 
 4.加入nodejs，端口默认3000，可设置PORT变量修改端口，支持节点订阅
 
-5.需要节点订阅的话，则设置变量XX_DOMAIN为固定隧道域名,订阅默认使用vless协议，XX_DOMAIN域名，端口8002，路径vls，优选ip使用ip.sb
+5.需要节点订阅的话，则设置变量XX_DOMAIN为固定隧道域名,订阅默认使用vless协议，XX_DOMAIN域名，端口8002，路径vls，优选ip默认使用ip.sb，可通过设置变量CF_IP更改
 
 6.可设置NO_SUIJI变量值为哪吒key，使用固定Key，否则使用随机key。原版使用的随机Key,会造成重启后本地不亮，使用固定没问题
 

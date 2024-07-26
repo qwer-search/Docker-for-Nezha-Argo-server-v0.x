@@ -1,18 +1,14 @@
 # Argo-Nezha-Service-Container
 
-1.F大原版简单修改，端口有所变化，其他参数一致，可以在原版基础上直接升级，然后修改固定隧道的端口即可。
+1.F大原版简单修改，参数一致，可以在原版基础上直接升级。
 
-GRPC_PROXY_PORT=8443
-
-WEB_PORT=8080
-
-2.加入xray，直接固定隧道设置，vless端口8002,路径vls,vmess端口8001,路径vms,必须设置UUID改变uuid值，否则不启用xray
+2.加入xray，设置UUID启用，否则不启用，xray参数:vless端口8002,路径vls,vmess端口8001,路径vms,
 
 4.加入nodejs，端口默认3000，可设置PORT变量修改端口，支持节点订阅
 
-5.需要节点订阅的话，则设置变量XX_DOMAIN为固定隧道域名,订阅默认使用vless协议，XX_DOMAIN域名，端口8002，路径vls，优选ip使用ip.sb.
+5.需要节点订阅的话，则设置变量XX_DOMAIN为固定隧道域名,订阅默认使用vless协议，XX_DOMAIN域名，端口8002，路径vls，优选ip使用ip.sb
 
-6.设置NO_SUIJI变量值为哪吒key可以使用固定Key。原版使用的随机Key,会造成重启后本地不亮，固定即可
+6.设置NO_SUIJI变量值为哪吒key，可以使用固定Key。原版使用的随机Key,会造成重启后本地不亮，固定即可
 
 总结:设置UUID启用xray,需要订阅，再设置XX_DOMAIN，并且把XX_DOMAIN端口设置8002，路径vls
 

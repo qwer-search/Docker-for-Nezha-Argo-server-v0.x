@@ -1,5 +1,17 @@
 # Argo-Nezha-Service-Container
 
+1.F version simple modification, fully compatible with f big use, you can directly use this upgrade!
+
+2.add xray, direct fixed tunnel settings, vless port 8002, path vls, vmess port 8001, path vms, must set UUID to change the uuid value, otherwise do not enable xray 4.add nodejs, port default 3000, you can set the PORT to modify the port, support node subscription
+
+4. Add nodejs, port default 3000, can set PORT variable to modify the port, support node subscription
+
+5. need to subscribe to use, need to set the variable XX_DOMAIN, subscription default use Vless protocol, XX_DOMAIN domain name, port 8002, path Vls, preferred ip to use ip.sb, need to change can modify their own source code or manual configuration
+
+Summarize:Set UUID to enable xray, need to subscribe, then set XX_DOMAIN, and set XX_DOMAIN port 8002, path vls
+
+
+
 Nezha server over Argo tunnel
 
 Documentation: English version | [中文版](https://github.com/fscarmen2/Argo-Nezha-Service-Container/blob/main/README.md)

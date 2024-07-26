@@ -1,8 +1,10 @@
 # Argo-Nezha-Service-Container
 
-1.F大原版简单修改，端口有所变化，其他参数一致，可以在原版基础上直接升级，然后修改端口即可。
+1.F大原版简单修改，端口有所变化，其他参数一致，可以在原版基础上直接升级，然后修改固定隧道的端口即可。
 
-GRPC_PROXY_PORT=8443,WEB_PORT=8080
+GRPC_PROXY_PORT=8443
+
+WEB_PORT=8080
 
 2.加入xray，直接固定隧道设置，vless端口8002,路径vls,vmess端口8001,路径vms,必须设置UUID改变uuid值，否则不启用xray
 

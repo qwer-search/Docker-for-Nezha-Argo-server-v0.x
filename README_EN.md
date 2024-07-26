@@ -12,8 +12,10 @@
 
 To summarize: set the UUID to enable xray, subscription is required, then set XX_DOMAIN, and set the XX_DOMAIN domain port to 8002, and the path to vls.
 
-docker image.
-
+docker image:
+```
+daxia2023/node-nezser:latest
+```
 
 Nezha server over Argo tunnel
 

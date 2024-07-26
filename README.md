@@ -12,7 +12,7 @@
 
 总结:设置UUID启用xray,需要订阅，再设置XX_DOMAIN，并且把XX_DOMAIN域名端口设置8002，路径vls
 
-docker镜像:
+docker镜像(内存最好大于512M，实际内存消耗300M+):
 ```
 daxia2023/node-nezser:latest
 ```

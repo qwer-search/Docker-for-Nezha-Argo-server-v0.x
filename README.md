@@ -2,15 +2,9 @@
 
 1.F大原版简单修改，完全兼容F大用法
 
-2.加入xray，直接固定隧道设置，vless端口8002,路径vls,vmess端口8001,路径vms
+2.加入xray，直接固定隧道设置，vless端口8002,路径vls,vmess端口8001,路径vms,必须设置UUID改变uuid值，否则不启用xray
 
-3.设置UUID改变uuid值
-
-4.加入nodejs，端口默认3000，可设置PORT变量修改
-
-5.设置NO_RES为哪吒key，可以固定nezhakey,不再使用随机值
-
-
+4.加入nodejs，端口默认3000，可设置PORT变量修改端口，支持节点订阅
 
 
 

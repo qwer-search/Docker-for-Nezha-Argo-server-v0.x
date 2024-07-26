@@ -6,8 +6,7 @@
 
 4.加入nodejs，端口默认3000，可设置PORT变量修改端口，支持节点订阅
 
-5.订阅默认使用ARGO_DOMAIN域名，设置ARGO_DOMAIN域名，端口8002，路径vls即可使用订阅节点。或者不使用
-ARGO_DOMAIN域名改为手动输入节点信息
+5.订阅默认使用vless协议，ARGO_DOMAIN域名，端口8002，路径vls，优选ip使用ip.sb,需要改变可以自行修改源码或手动配置
 
 # F大哪吒面板
 

@@ -1,15 +1,18 @@
 # Argo-Nezha-Service-Container
 
-1.F version simple modification, fully compatible with f big use, you can directly use this upgrade!
+1.F big original simple modification, the parameters are consistent, you can upgrade directly on the basis of the original version!
 
-2.add xray, direct fixed tunnel settings, vless port 8002, path vls, vmess port 8001, path vms, must set UUID to change the uuid value, otherwise do not enable xray 4.add nodejs, port default 3000, you can set the PORT to modify the port, support node subscription
+2.add xray, set UUID to enable, otherwise not enabled, xray parameters: vless port 8002, path vls, vmess port 8001, path vms
 
-4. Add nodejs, port default 3000, can set PORT variable to modify the port, support node subscription
+4. Add nodejs, port default 3000, can set PORT variable to modify the port, support node subscription.
 
-5. need to subscribe to use, need to set the variable XX_DOMAIN, subscription default use Vless protocol, XX_DOMAIN domain name, port 8002, path Vls, preferred ip to use ip.sb, need to change can modify their own source code or manual configuration
+5. If you need node subscription, set variable XX_DOMAIN as the fixed tunnel domain name, subscribe to the default vless protocol, XX_DOMAIN domain name, port 8002, path vls, preferred ip default ip.sb, can be set by setting the variable CF_IP to change the default ip.
 
-Summarize:Set UUID to enable xray, need to subscribe, then set XX_DOMAIN, and set XX_DOMAIN port 8002, path vls
+6. You can set the value of NO_SUIJI variable to Nezha key to let local Nezha use fixed key, otherwise use random key.
 
+To summarize: set the UUID to enable xray, subscription is required, then set XX_DOMAIN, and set the XX_DOMAIN domain port to 8002, and the path to vls.
+
+docker image.
 
 
 Nezha server over Argo tunnel

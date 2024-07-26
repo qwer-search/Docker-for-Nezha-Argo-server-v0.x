@@ -11,9 +11,9 @@
 总结:设置UUID启用xray,需要订阅，再设置XX_DOMAIN，并且把XX_DOMAIN端口设置8002，路径vls
 
 docker镜像:
-'''
+```
 daxia2023/node-nezser:latest
-'''
+```
 # F大哪吒面板
 
 使用 Argo 隧道的哪吒服务端

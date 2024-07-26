@@ -1,6 +1,6 @@
 # Argo-Nezha-Service-Container
 
-1.F大原版简单修改，完全兼容F大用法
+1.F大原版简单修改，完全兼容F大用法，你可以直接使用这个升级
 
 2.加入xray，直接固定隧道设置，vless端口8002,路径vls,vmess端口8001,路径vms,必须设置UUID改变uuid值，否则不启用xray
 

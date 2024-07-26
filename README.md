@@ -6,8 +6,9 @@
 
 3.设置UUID,VPATH,MPATH,改变xrayuuid和路径
 
-4.增加nodejs，端口默认3000，可设置PORT变量修改
+4.加入nodejs，端口默认3000，可设置PORT变量修改
 
+5.设置NO_RES为哪吒key，可以固定nezhakey,不再使用随机值
 
 
 

@@ -6,7 +6,7 @@
 
 3.设置UUID,VPATH,MPATH,改变xrayuuid和路径
 
-4.增加nodejs，端口8080
+4.增加nodejs，端口默认3000，可设置PORT变量修改
 
 
 

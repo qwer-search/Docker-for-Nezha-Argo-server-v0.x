@@ -5,9 +5,9 @@ if [ ! -s /etc/supervisor/conf.d/damon.conf ]; then
   
   # 设置 Github CDN 及若干变量，如是 IPv6 only 或者大陆机器，需要 Github 加速网，可自行查找放在 GH_PROXY 处 ，如 https://mirror.ghproxy.com/ ，能不用就不用，减少因加速网导致的故障。
   GH_PROXY='https://ghproxy.lvedong.eu.org/'
-  GRPC_PROXY_PORT=443
+  GRPC_PROXY_PORT=8443
   GRPC_PORT=5555
-  WEB_PORT=80
+  WEB_PORT=8080
   CADDY_HTTP_PORT=2052
   WORK_DIR=/dashboard
 
@@ -141,8 +141,8 @@ EOF
 
   # 下载包含本地数据的 sqlite.db 文件，生成18位随机字符串用于本地 Token
   wget -P ${WORK_DIR}/data/ ${GH_PROXY}https://github.com/fscarmen2/Argo-Nezha-Service-Container/raw/main/sqlite.db
-  [ -z "$NO_RES" ] && LOCAL_TOKEN=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 18)
-  [ -n "$NO_RES" ] && LOCAL_TOKEN="$NO_RES"
+  [ -z "$NO_SUIJI" ] && LOCAL_TOKEN=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 18)
+  [ -n "$NO_SUIJI" ] && LOCAL_TOKEN="$NO_SUIJI"
   sqlite3 ${WORK_DIR}/data/sqlite.db "update servers set secret='${LOCAL_TOKEN}' where created_at='2023-04-23 13:02:00.770756566+08:00'"
 
   # SSH path 与 GH_CLIENTSECRET 一样
@@ -174,8 +174,6 @@ ingress:
     path: /$GH_CLIENTID/*
   - hostname: $ARGO_DOMAIN
     service: http://localhost:$WEB_PORT
-  - hostname: $XX_DOMAIN
-    service: http://localhost:8002  
   - service: http_status:404
 EOF
 
@@ -249,7 +247,7 @@ EOF
   wget -qO- ${GH_PROXY}https://raw.githubusercontent.com/fscarmen2/Argo-Nezha-Service-Container/main/template/renew.sh | sed '1,/^########/d' >> $WORK_DIR/renew.sh
 
   # 生成定时任务: 1.每天北京时间 3:30:00 更新备份和还原文件，2.每天北京时间 4:00:00 备份一次，并重启 cron 服务； 3.每分钟自动检测在线备份文件里的内容
-  [ -z "$NO_RES" ] && [ -z "$NO_AUTO_RENEW" ] && [ -s $WORK_DIR/renew.sh ] && ! grep -q "$WORK_DIR/renew.sh" /etc/crontab && echo "30 3 * * * root bash $WORK_DIR/renew.sh" >> /etc/crontab
+  [ -z "$NO_AUTO_RENEW" ] && [ -s $WORK_DIR/renew.sh ] && ! grep -q "$WORK_DIR/renew.sh" /etc/crontab && echo "30 3 * * * root bash $WORK_DIR/renew.sh" >> /etc/crontab
   [ -s $WORK_DIR/backup.sh ] && ! grep -q "$WORK_DIR/backup.sh" /etc/crontab && echo "0 4 * * * root bash $WORK_DIR/backup.sh a" >> /etc/crontab
   [ -z "$NO_RES" ] && [ -s $WORK_DIR/restore.sh ] && ! grep -q "$WORK_DIR/restore.sh" /etc/crontab && echo "* * * * * root bash $WORK_DIR/restore.sh a" >> /etc/crontab
   service cron restart
@@ -260,7 +258,7 @@ echo "     /listen 查看端口"
 echo "     /start 手动启动脚本"
 echo "     /res 手动恢复dashboard.tar.gz"
 echo "     /backup 手动备份"
-echo "     /list/$UUID  查看订阅"
+echo "     /list/uuid 查看订阅"
 NODE_RUN="node $WORK_DIR/index.js"
 
 # 启动xxxry

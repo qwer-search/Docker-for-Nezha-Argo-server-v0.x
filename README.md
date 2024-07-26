@@ -1,5 +1,19 @@
 # Argo-Nezha-Service-Container
 
+1.F大原版简单修改，完全兼容F大用法
+
+2.加入xray，直接固定隧道设置，vless端口8002,路径vls,vmess端口8001,路径vms
+
+3.设置UUID,VPATH,MPATH,改变xrayuuid和路径
+
+4.增加nodejs，端口8080
+
+
+
+
+
+
+
 # F大哪吒面板
 
 使用 Argo 隧道的哪吒服务端

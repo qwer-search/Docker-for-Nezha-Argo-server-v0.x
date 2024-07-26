@@ -8,7 +8,7 @@
 
 5.需要订阅使用，需设置变量XX_DOMAIN,订阅默认使用vless协议，XX_DOMAIN域名，端口8002，路径vls，优选ip使用ip.sb,需要改变可以自行修改源码或手动配置
 
-6.设置NO_SUIJI为哪吒key可以使用固定Key。原版使用的随机Key,会造成重启后本地不亮，固定即可
+6.设置NO_SUIJI变量值为哪吒key可以使用固定Key。原版使用的随机Key,会造成重启后本地不亮，固定即可
 
 总结:设置UUID启用xray,需要订阅，再设置XX_DOMAIN，并且把XX_DOMAIN端口设置8002，路径vls
 

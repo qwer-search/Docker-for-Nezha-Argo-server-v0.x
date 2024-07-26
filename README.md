@@ -14,7 +14,7 @@
 
 使用 Argo 隧道的哪吒服务端
 
-Documentation: [English version](https://github.com/fscarmen2/Argo-Nezha-Service-Container/blob/main/README_EN.md) | 中文版
+Documentation: [English version](https://github.com/dsadsadsss/nodejs-Nezha-server/blob/main/README_EN.md) | 中文版
 
 * * *
 

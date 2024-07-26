@@ -174,6 +174,8 @@ ingress:
     path: /$GH_CLIENTID/*
   - hostname: $ARGO_DOMAIN
     service: http://localhost:$WEB_PORT
+  - hostname: $XX_DOMAIN
+    service: http://localhost:8002  
   - service: http_status:404
 EOF
 

@@ -8,7 +8,7 @@
 
 5.需要订阅使用，需设置变量XX_DOMAIN,订阅默认使用vless协议，XX_DOMAIN域名，端口8002，路径vls，优选ip使用ip.sb,需要改变可以自行修改源码或手动配置
 
-总结:设置UUID启用xray,需要订阅，再设置XX_DOMAIN，并且吧XX_DOMAIN端口设置8002，路径vls
+总结:设置UUID启用xray,需要订阅，再设置XX_DOMAIN，并且把XX_DOMAIN端口设置8002，路径vls
 
 # F大哪吒面板
 

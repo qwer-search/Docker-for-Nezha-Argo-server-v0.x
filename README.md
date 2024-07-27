@@ -7,7 +7,7 @@
 
 3.节点隧道域名与哪吒Web共用，端口设置80即可.通过路径访问不同结果。默认路径为哪吒控制面板，路径vls为vless,路径vms为vmess
 
-4.设置CF_IP改变优选IP，默认ip.sb
+4.设置CF_IP改变优选IP，默认ip.sb，设置SUB_NAME改变节点名称，默认docker
 
 5.可设置NO_SUIJI变量值为key,让本地哪吒使用固定Key，否则使用随机key
 

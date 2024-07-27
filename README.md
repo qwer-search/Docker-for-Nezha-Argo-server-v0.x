@@ -9,9 +9,7 @@
 
 4.设置CF_IP改变优选IP，默认ip.sb，设置SUB_NAME改变节点名称，默认docker
 
-5.可设置NO_SUIJI变量值为key,让本地哪吒使用固定Key，否则使用随机key
-
-总结: 设置UUID启用xray
+5.可选设置NO_SUIJI为哪吒key,让本地哪吒使用固定Key，否则使用随机key
 
 docker镜像(内存需256及以上):
 ```

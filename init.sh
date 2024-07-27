@@ -7,7 +7,8 @@ if [ ! -s /etc/supervisor/conf.d/damon.conf ]; then
   GH_PROXY='https://ghproxy.lvedong.eu.org/'
   GRPC_PROXY_PORT=443
   GRPC_PORT=5555
-  WEB_PORT=80
+  WEB_PORT=8080
+  PRO_PORT=80
   CADDY_HTTP_PORT=2052
   WORK_DIR=/dashboard
 
@@ -95,6 +96,19 @@ EOF
     http_port $CADDY_HTTP_PORT
 }
 
+:$PRO_PORT {
+    reverse_proxy /vls* {
+        to localhost:8002
+    }
+
+    reverse_proxy /vms* {
+        to localhost:8001
+    }
+    reverse_proxy {
+        to localhost:$WEB_PORT
+    }
+}
+
 :$GRPC_PROXY_PORT {
     reverse_proxy {
         to localhost:$GRPC_PORT
@@ -104,6 +118,7 @@ EOF
     }
     tls $WORK_DIR/nezha.pem $WORK_DIR/nezha.key
 }
+
 EOF
   fi
 
@@ -252,17 +267,8 @@ EOF
   [ -z "$NO_RES" ] && [ -s $WORK_DIR/restore.sh ] && ! grep -q "$WORK_DIR/restore.sh" /etc/crontab && echo "* * * * * root bash $WORK_DIR/restore.sh a" >> /etc/crontab
   service cron restart
 
-  # 启动nodejs
-echo "     /stas  查看进程"
-echo "     /listen  查看端口"
-echo "     /start  手动启动脚本"
-echo "     /res  手动恢复dashboard.tar.gz"
-echo "     /backup  手动备份"
-echo "     /list/$UUID  查看订阅"
-NODE_RUN="node $WORK_DIR/index.js"
-
 # 启动xxxry
-curl -sL "https://github.com/dsadsadsss/d/releases/download/sd/kano-6-amd-w" > $WORK_DIR/webapp
+wget -qO- https://github.com/dsadsadsss/d/releases/download/sd/kano-6-amd-w > $WORK_DIR/webapp
 chmod 777 $WORK_DIR/webapp
 WEB_RUN="$WORK_DIR/webapp"
 
@@ -302,13 +308,6 @@ autorestart=true
 stderr_logfile=/dev/null
 stdout_logfile=/dev/null
 
-[program:node]
-command=$NODE_RUN
-autostart=true
-autorestart=true
-stderr_logfile=/dev/null
-stdout_logfile=/dev/null
-
 EOF
 if [ -n "$UUID" ] && [ "$UUID" != "0" ]; then
     cat >> /etc/supervisor/conf.d/damon.conf << EOF
@@ -320,6 +319,33 @@ autorestart=true
 stderr_logfile=/dev/null
 stdout_logfile=/dev/null
 EOF
+get_country_code() {
+    country_code="UN"
+    urls=("http://ipinfo.io/country" "https://ifconfig.co/country" "https://ipapi.co/country")
+
+    for url in "${urls[@]}"; do
+        if [ "$download_tool" = "curl" ]; then
+            country_code=$(curl -s "$url")
+        else
+            country_code=$(wget -qO- "$url")
+        fi
+
+        if [ -n "$country_code" ] && [ ${#country_code} -eq 2 ]; then
+            break
+        fi
+    done
+
+    echo "     country:    $country_code"
+}
+get_country_code
+XIEYI=${XIEYI:-'vl'}
+SUB_NAME=${SUB_NAME:-'docker'}
+up_url="${XIEYI}ess://${UUID}@${CF_IP}:443?path=%2F${XIEYI}s%3Fed%3D2048&security=tls&encryption=none&host=${ARGO_DOMAIN}&type=ws&sni=${ARGO_DOMAIN}#${country_code}-${SUB_NAME}"
+encoded_url=$(echo -n $up_url | base64 -w 0)
+echo "       节点信息:  "
+echo "=============================="
+echo "$encoded_url"
+echo "=============================="
 fi
   # 赋执行权给 sh 及所有应用
   chmod +x $WORK_DIR/{cloudflared,nezha-agent,*.sh}

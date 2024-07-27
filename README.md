@@ -2,9 +2,11 @@
 
 1.F大原版简单修改，参数一致，可以在原版基础上直接升级
 
-2.加入xray，设置UUID启用，否则不启用。日志显示节点信息，默认vless协议,域名与哪吒web共用，你可以复制后手动修改vmess,路径改为vms
+2.加入xray，设置UUID启用，否则不启用。日志显示节点信息，默认vless协议
 
-3.可设置NO_SUIJI变量值为key,让本地哪吒使用固定Key，否则使用随机key
+3.隧道域名与哪吒Web共用，端口设置80即可.节点路径vls为vless,路径vms为vmess,默认路径为哪吒web控制面板
+
+4.可设置NO_SUIJI变量值为key,让本地哪吒使用固定Key，否则使用随机key
 
 总结: 设置UUID启用xray
 

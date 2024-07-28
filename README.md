@@ -1,6 +1,6 @@
 # Argo-Nezha-Service-Container
 
-## 7.28更新，设置IS_UPDATE值为no可禁止自动更新，不设置则不受影响
+# 7.28更新，设置IS_UPDATE值为no可禁止自动更新，不设置则不受影响
 
 
 1.F大原版简单修改，参数一致，可以在原版上直接升级

@@ -1,5 +1,8 @@
 # Argo-Nezha-Service-Container
 
+## 7.28更新，设置IS_UPDATE值为no禁止自动更新
+
+
 1.F大原版简单修改，参数一致，可以在原版上直接升级
 
 2.加入xray，设置UUID启用，否则不启用。日志显示节点信息，默认vless协议

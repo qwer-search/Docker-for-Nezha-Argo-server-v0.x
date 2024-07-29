@@ -83,7 +83,7 @@ if [[ -n "$GH_REPO" && -n "$GH_BACKUP_USER" && -n "$GH_EMAIL" && -n "$GH_PAT" ]]
     IS_BACKUP=true
   fi
 fi
- IS_UPDATE=${IS_UPDATE:-'yes'}
+
 if [[ "${DASHBOARD_UPDATE}${FORCE_UPDATE}" =~ 'true' && "${IS_UPDATE}" == 'yes' ]]; then
   if [[ "${DASHBOARD_UPDATE}${FORCE_UPDATE}" =~ 'true' ]]; then
     hint "\n Renew dashboard app to $DASHBOARD_LATEST \n"

@@ -1,5 +1,6 @@
 # Argo-Nezha-Service-Container
 
+有问题到群里反馈https://t.me/HiaiFeng
 ========================
 
 <7.28更新>:  设置IS_UPDATE值为no可禁止自动更新，版本降到0.18.2，不设置则和原版一样会自动更新到最新版

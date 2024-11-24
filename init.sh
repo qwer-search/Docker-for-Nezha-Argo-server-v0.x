@@ -128,10 +128,10 @@ EOF
  unzip /tmp/dashboard.zip -d /tmp
   mv -f /tmp/dist/dashboard-linux-amd64 $WORK_DIR/app
  else
-   DASHBOARD_LATEST=$(wget -qO- "${GH_PROXY}https://api.github.com/repos/naiba/nezha/releases/latest" | awk -F '"' '/"tag_name"/{print $4}')
-   wget -O /tmp/dashboard.zip ${GH_PROXY}https://github.com/naiba/nezha/releases/download/$DASHBOARD_LATEST/dashboard-linux-$ARCH.zip
-   unzip /tmp/dashboard.zip -d /tmp
-   mv -f /tmp/dist/dashboard-linux-$ARCH $WORK_DIR/app
+  DASHBOARD_LATEST=$(wget -qO- "${GH_PROXY}https://api.github.com/repos/naiba/nezha/releases/latest" | awk -F '"' '/"tag_name"/{print $4}')
+  wget -O /tmp/dashboard.zip ${GH_PROXY}https://github.com/naiba/nezha/releases/download/$DASHBOARD_LATEST/dashboard-linux-$ARCH.zip
+  unzip /tmp/dashboard.zip -d /tmp
+  mv -f /tmp/dist/dashboard-linux-$ARCH $WORK_DIR/app
    fi
   
   wget -qO $WORK_DIR/cloudflared ${GH_PROXY}https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-$ARCH

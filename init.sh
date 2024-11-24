@@ -128,10 +128,10 @@ EOF
  unzip /tmp/dashboard.zip -d /tmp
   mv -f /tmp/dist/dashboard-linux-amd64 $WORK_DIR/app
  else
-  DASHBOARD_LATEST=$(wget -qO- "${GH_PROXY}https://api.github.com/repos/naiba/nezha/releases/latest" | awk -F '"' '/"tag_name"/{print $4}')
-  wget -O /tmp/dashboard.zip ${GH_PROXY}https://github.com/naiba/nezha/releases/download/$DASHBOARD_LATEST/dashboard-linux-$ARCH.zip
-  unzip /tmp/dashboard.zip -d /tmp
-  mv -f /tmp/dist/dashboard-linux-$ARCH $WORK_DIR/app
+   DASHBOARD_LATEST=$(wget -qO- "${GH_PROXY}https://api.github.com/repos/naiba/nezha/releases/latest" | awk -F '"' '/"tag_name"/{print $4}')
+   wget -O /tmp/dashboard.zip ${GH_PROXY}https://github.com/naiba/nezha/releases/download/$DASHBOARD_LATEST/dashboard-linux-$ARCH.zip
+   unzip /tmp/dashboard.zip -d /tmp
+   mv -f /tmp/dist/dashboard-linux-$ARCH $WORK_DIR/app
    fi
   
   wget -qO $WORK_DIR/cloudflared ${GH_PROXY}https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-$ARCH
@@ -353,14 +353,21 @@ get_country_code() {
     echo "     国家:    $country_code"
 }
 get_country_code
-XIEYI=${XIEYI:-'vl'}
+XIEYI='vl'
+XIEYI2='vm'
 CF_IP=${CF_IP:-'ip.sb'}
-SUB_NAME=${SUB_NAME:-'docker'}
+SUB_NAME=${SUB_NAME:-'nezha'}
 up_url="${XIEYI}ess://${UUID}@${CF_IP}:443?path=%2F${XIEYI}s%3Fed%3D2048&security=tls&encryption=none&host=${ARGO_DOMAIN}&type=ws&sni=${ARGO_DOMAIN}#${country_code}-${SUB_NAME}"
-encoded_url=$(echo -n $up_url | base64 -w 0)
-echo "=====  <节点信息>  =====  "
-echo "=============================="
+VM_SS="{ \"v\": \"2\", \"ps\": \"${country_code}-${SUB_NAME}\", \"add\": \"${CF_IP}\", \"port\": \"443\", \"id\": \"${UUID}\", \"aid\": \"0\", \"scy\": \"none\", \"net\": \"ws\", \"type\": \"none\", \"host\": \"${ARGO_DOMAIN}\", \"path\": \"/vms?ed=2048\", \"tls\": \"tls\", \"sni\": \"${ARGO_DOMAIN}\", \"alpn\": \"\", \"fp\": \"randomized\", \"allowlnsecure\": \"flase\"}"
+if command -v base64 >/dev/null 2>&1; then
+  vm_url="${XIEYI2}ess://$(echo -n "$VM_SS" | base64 -w 0)"
+fi
+x_url="${up_url}\n${vm_url}"
+encoded_url=$(echo -e "${x_url}\n${up_url2}" | base64 -w 0)
+echo "============  <节点信息:>  ========  "
+echo "  "
 echo "$encoded_url"
+echo "  "
 echo "=============================="
 fi
   # 赋执行权给 sh 及所有应用

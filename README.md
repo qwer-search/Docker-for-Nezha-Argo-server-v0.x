@@ -12,7 +12,7 @@ F大原版简单修改，参数一致,可以直接把镜像替换成这个
 
 2.设置变量IS_UPDATE值为no，可将版本固定为0.17.9
 
-docker镜像(端口设置80):
+docker镜像(默认端口80，可设置变量PRO_PORT改变端口):
 ```
 daxia2023/node-nezser:latest
 ```

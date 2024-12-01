@@ -1,5 +1,6 @@
-# Argo-Nezha-Service-Container
+# Docker-for-Nezha-Argo-server-v0.x
 
+节点与哪吒融于一体，即可当哪吒面板，也可当节点使用
 ========================
 
 F大原版简单修改，参数一致,可以直接把镜像替换成这个

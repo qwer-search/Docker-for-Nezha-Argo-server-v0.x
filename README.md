@@ -19,7 +19,7 @@ docker镜像(默认端口80，可设置变量PRO_PORT改变端口):
 ```
 daxia2023/node-nezser:latest
 ```
-
+# 如果碰到本地不亮，可以设置变量NO_SUIJI值为本地哪吒key,然后进入控制台设置本地相同的哪吒key即可
 
 F大原版地址:https://github.com/fscarmen2/Argo-Nezha-Service-Container.git
  

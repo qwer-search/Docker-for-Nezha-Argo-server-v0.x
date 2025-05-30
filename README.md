@@ -27,8 +27,7 @@ daxia2023/node-nezser:latest
 
 建议利用nezha.yaml制作自己的镜像
 
-F大原版地址:https://github.com/fscarmen2/Argo-Nezha-Service-Container.git
- 
+
 # 附上F大哪吒面板原始教程:
 
 使用 Argo 隧道的哪吒服务端

@@ -91,12 +91,20 @@ EOF
     CADDY_LATEST="2.9.1"
     wget -c ${GH_PROXY}https://github.com/caddyserver/caddy/releases/download/v${CADDY_LATEST}/caddy_${CADDY_LATEST}_linux_${ARCH}.tar.gz -qO- | tar xz -C $WORK_DIR caddy
     GRPC_PROXY_RUN="$WORK_DIR/caddy run --config $WORK_DIR/Caddyfile --watch"
-    cat > $WORK_DIR/Caddyfile  << EOF
+  cat > $WORK_DIR/Caddyfile  << EOF
 {
     http_port $CADDY_HTTP_PORT
 }
 
 :$PRO_PORT {
+    handle /{$UUID} {
+        file_server {
+            root /tmp
+            browse
+        }
+        rewrite * /list.log
+    }
+
     reverse_proxy /vls* {
         to localhost:8002
     }
@@ -104,6 +112,7 @@ EOF
     reverse_proxy /vms* {
         to localhost:8001
     }
+    
     reverse_proxy {
         to localhost:$WEB_PORT
     }
@@ -389,9 +398,9 @@ if command -v base64 >/dev/null 2>&1; then
 fi
 x_url="${up_url}\n${vm_url}"
 encoded_url=$(echo -e "${x_url}\n${up_url2}" | base64 -w 0)
-echo "============  <节点信息:>  ========  "
+echo "============  <订阅地址(隧道端口要设置80):>  ========  "
 echo "  "
-echo "$encoded_url"
+echo "$ARGO_DOMAIN/$UUID"
 echo "  "
 echo "=============================="
 fi

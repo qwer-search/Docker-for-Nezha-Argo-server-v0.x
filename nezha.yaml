@@ -1,4 +1,5 @@
-name: Build and Push Docker Image #可以使用action生成自己的镜像
+name: Build and Push Docker Image 
+#可以使用action生成自己的镜像
 
 on:
   push:

@@ -97,7 +97,7 @@ EOF
 }
 
 :$PRO_PORT {
-    handle /{$UUID} {
+    handle /${UUID} {
         file_server {
             root /tmp
             browse

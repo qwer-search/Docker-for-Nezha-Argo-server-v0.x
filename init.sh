@@ -253,7 +253,7 @@ EOF
 
 # backup.sh 传参 a 自动还原； 传参 m 手动还原； 传参 f 强制更新面板 app 文件及 cloudflared 文件，并备份数据至成备份库
 IS_UPDATE=$IS_UPDATE
-LOCAL_TOKEN="$NO_SUIJI"
+LOCAL_TOKEN=$LOCAL_TOKEN
 GH_PROXY=$GH_PROXY
 GH_PAT=$GH_PAT
 GH_BACKUP_USER=$GH_BACKUP_USER
@@ -278,7 +278,7 @@ EOF
 # restore.sh 传参 a 自动还原 README.md 记录的文件，当本地与远程记录文件一样时不还原； 传参 f 不管本地记录文件，强制还原成备份库里 README.md 记录的文件； 传参 dashboard-***.tar.gz 还原成备份库里的该文件；不带参数则要求选择备份库里的文件名
 LOCAL_TOKEN=$LOCAL_TOKEN
 GH_PROXY=$GH_PROXY
-LOCAL_TOKEN="$NO_SUIJI"
+LOCAL_TOKEN=$LOCAL_TOKEN
 GH_PAT=$GH_PAT
 GH_BACKUP_USER=$GH_BACKUP_USER
 GH_REPO=$GH_REPO
@@ -297,7 +297,7 @@ EOF
   # 生成 renew.sh 文件的步骤1 - 设置环境变量
   cat > $WORK_DIR/renew.sh << EOF
 #!/usr/bin/env bash
-LOCAL_TOKEN="$NO_SUIJI"
+LOCAL_TOKEN=$LOCAL_TOKEN
 GH_PROXY=$GH_PROXY
 WORK_DIR=/dashboard
 TEMP_DIR=/tmp/renew

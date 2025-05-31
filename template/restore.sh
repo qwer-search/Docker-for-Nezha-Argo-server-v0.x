@@ -164,7 +164,7 @@ if [ -e $TEMP_DIR/backup.tar.gz ]; then
   cp -rf ${TEMP_DIR}/${FILE_PATH}data/* ${WORK_DIR}/data/
   [ -d ${TEMP_DIR}/${FILE_PATH}resource ] && cp -rf ${TEMP_DIR}/${FILE_PATH}resource ${WORK_DIR}
   rm -rf ${TEMP_DIR}
-
+  fi
   # 在本地记录还原文件名
   echo "$ONLINE" > $WORK_DIR/dbfile
   rm -f $TEMP_DIR/backup.tar.gz

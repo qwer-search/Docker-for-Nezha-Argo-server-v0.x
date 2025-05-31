@@ -1,4 +1,4 @@
-FROM daxia2023/node-nezser:latest
+FROM debian
 
 WORKDIR /dashboard
 

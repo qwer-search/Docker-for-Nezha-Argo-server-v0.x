@@ -156,6 +156,8 @@ if [ -e $TEMP_DIR/backup.tar.gz ]; then
   if [ "$IS_DOCKER" = 1 ]; then
     [ $(type -p sqlite3) ] || apt-get -y install sqlite3
     LOCAL_DATE=$(sqlite3 ${TEMP_DIR}/${FILE_PATH}data/sqlite.db "SELECT created_at FROM servers WHERE name LIKE '%local%' COLLATE NOCASE LIMIT 1;") 
+    [ -z "$LOCAL_DATE" ] && LOCAL_DATE='2023-04-23 13:02:00.770756566+08:00'
+ 
     DB_TOKEN=$(sqlite3 ${TEMP_DIR}/${FILE_PATH}data/sqlite.db "select secret from servers where created_at='${LOCAL_DATE}'")
     [ -n "$DB_TOKEN" ] && LOCAL_TOKEN=$(grep 'nezha-agent -s localhost' /etc/supervisor/conf.d/damon.conf | sed 's/.*-p \([^ ]*\).*/\1/')
     [ "$DB_TOKEN" != "$LOCAL_TOKEN" ] && sqlite3 ${TEMP_DIR}/${FILE_PATH}data/sqlite.db "UPDATE servers SET secret='${LOCAL_TOKEN}' WHERE created_at='${LOCAL_DATE}';"

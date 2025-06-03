@@ -91,6 +91,7 @@ EOF
     CADDY_LATEST="2.9.1"
     wget -c ${GH_PROXY}https://github.com/caddyserver/caddy/releases/download/v${CADDY_LATEST}/caddy_${CADDY_LATEST}_linux_${ARCH}.tar.gz -qO- | tar xz -C $WORK_DIR caddy
     GRPC_PROXY_RUN="$WORK_DIR/caddy run --config $WORK_DIR/Caddyfile --watch"
+    if [ -n "$UUID" ] && [ "$UUID" != "0" ]; then
   cat > $WORK_DIR/Caddyfile  << EOF
 {
     http_port $CADDY_HTTP_PORT
@@ -129,7 +130,31 @@ EOF
 }
 
 EOF
-  fi
+ else
+  cat > $WORK_DIR/Caddyfile  << EOF
+{
+    http_port $CADDY_HTTP_PORT
+}
+
+:$PRO_PORT {
+    reverse_proxy {
+        to localhost:$WEB_PORT
+    }
+}
+
+:$GRPC_PROXY_PORT {
+    reverse_proxy {
+        to localhost:$GRPC_PORT
+        transport http {
+            versions h2c 2
+        }
+    }
+    tls $WORK_DIR/nezha.pem $WORK_DIR/nezha.key
+}
+
+EOF
+ fi
+fi
 
 
   # 下载需要的应用

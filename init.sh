@@ -310,21 +310,21 @@ nodaemon=true
 logfile=/dev/null
 pidfile=/run/supervisord.pid
 
-[program:caddy]
+[program:grpcproxy]
 command=$GRPC_PROXY_RUN
 autostart=true
 autorestart=true
 stderr_logfile=/dev/null
 stdout_logfile=/dev/null
 
-[program:nezserver]
+[program:nezha]
 command=$WORK_DIR/app
 autostart=true
 autorestart=true
 stderr_logfile=/dev/null
 stdout_logfile=/dev/null
 
-[program:nezagent]
+[program:agent]
 command=$AG_RUN
 autostart=true
 autorestart=true

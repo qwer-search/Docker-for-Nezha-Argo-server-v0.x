@@ -48,46 +48,8 @@ if [ ! -s /etc/supervisor/conf.d/damon.conf ]; then
       ;;
     * ) error " $(text 2) "
   esac
-
-  # 用户选择使用 gRPC 反代方式: Nginx / Caddy / grpcwebproxy，默认为 Caddy；如需使用 grpcwebproxy，把 REVERSE_PROXY_MODE 的值设为 nginx 或 grpcwebproxy
-  if [ "$REVERSE_PROXY_MODE" = 'grpcwebproxy' ]; then
-    wget -c ${GH_PROXY}https://github.com/dsadsadsss/Docker-for-Nezha-Argo-server-v0.x/releases/download/grpcwebproxy/grpcwebproxy-linux-$ARCH.tar.gz -qO- | tar xz -C $WORK_DIR
-    chmod +x $WORK_DIR/grpcwebproxy
-    GRPC_PROXY_RUN="$WORK_DIR/grpcwebproxy --server_tls_cert_file=$WORK_DIR/nezha.pem --server_tls_key_file=$WORK_DIR/nezha.key --server_http_tls_port=$GRPC_PROXY_PORT --backend_addr=localhost:$GRPC_PORT --backend_tls_noverify --server_http_max_read_timeout=300s --server_http_max_write_timeout=300s"
-  elif [ "$REVERSE_PROXY_MODE" = 'nginx' ]; then
-    GRPC_PROXY_RUN='nginx -g "daemon off;"'
-    cat > /etc/nginx/nginx.conf  << EOF
-user www-data;
-worker_processes auto;
-pid /run/nginx.pid;
-include /etc/nginx/modules-enabled/*.conf;
-events {
-        worker_connections 768;
-        # multi_accept on;
-}
-http {
-  upstream grpcservers {
-    server localhost:$GRPC_PORT;
-    keepalive 1024;
-  }
-  server {
-    listen 127.0.0.1:$GRPC_PROXY_PORT ssl http2;
-    server_name $ARGO_DOMAIN;
-    ssl_certificate          $WORK_DIR/nezha.pem;
-    ssl_certificate_key      $WORK_DIR/nezha.key;
-    underscores_in_headers on;
-    location / {
-      grpc_read_timeout 300s;
-      grpc_send_timeout 300s;
-      grpc_socket_keepalive on;
-      grpc_pass grpc://grpcservers;
-    }
-    access_log  /dev/null;
-    error_log   /dev/null;
-  }
-}
-EOF
-  else
+   
+   # 使用caddy反代
     CADDY_LATEST="2.9.1"
     wget -c ${GH_PROXY}https://github.com/caddyserver/caddy/releases/download/v${CADDY_LATEST}/caddy_${CADDY_LATEST}_linux_${ARCH}.tar.gz -qO- | tar xz -C $WORK_DIR caddy
     GRPC_PROXY_RUN="$WORK_DIR/caddy run --config $WORK_DIR/Caddyfile --watch"
@@ -154,7 +116,6 @@ EOF
 
 EOF
  fi
-fi
 
 
   # 下载需要的应用

@@ -1,5 +1,7 @@
 ## Docker-for-Nezha-Argo-server-v0.x
-v1版本：https://github.com/dsadsadsss/Docker-for-Nezha-Argo-server-v1.x.git
+
+v1版本：不支持，不好用
+
 #### 节点与哪吒融于一体，即可当哪吒面板，也可当节点使用
 ========================
 

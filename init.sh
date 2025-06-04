@@ -9,7 +9,6 @@ if [ ! -s /etc/supervisor/conf.d/damon.conf ]; then
   GRPC_PORT=5555
   WEB_PORT=8080
   PRO_PORT=${PRO_PORT:-'80'}
-  CADDY_HTTP_PORT=2052
   WORK_DIR=/dashboard
   IS_UPDATE=${IS_UPDATE:-'no'}
   # 如不分离备份的 github 账户，默认与哪吒登陆的 github 账户一致
@@ -55,10 +54,6 @@ if [ ! -s /etc/supervisor/conf.d/damon.conf ]; then
     GRPC_PROXY_RUN="$WORK_DIR/caddy run --config $WORK_DIR/Caddyfile --watch"
     if [ -n "$UUID" ] && [ "$UUID" != "0" ]; then
   cat > $WORK_DIR/Caddyfile  << EOF
-{
-    http_port $CADDY_HTTP_PORT
-}
-
 :$PRO_PORT {
     handle /${UUID} {
         file_server {
@@ -94,10 +89,6 @@ if [ ! -s /etc/supervisor/conf.d/damon.conf ]; then
 EOF
  else
   cat > $WORK_DIR/Caddyfile  << EOF
-{
-    http_port $CADDY_HTTP_PORT
-}
-
 :$PRO_PORT {
     reverse_proxy {
         to localhost:$WEB_PORT
@@ -319,21 +310,21 @@ nodaemon=true
 logfile=/dev/null
 pidfile=/run/supervisord.pid
 
-[program:grpcproxy]
+[program:caddy]
 command=$GRPC_PROXY_RUN
 autostart=true
 autorestart=true
 stderr_logfile=/dev/null
 stdout_logfile=/dev/null
 
-[program:nezha]
+[program:nezserver]
 command=$WORK_DIR/app
 autostart=true
 autorestart=true
 stderr_logfile=/dev/null
 stdout_logfile=/dev/null
 
-[program:agent]
+[program:nezagent]
 command=$AG_RUN
 autostart=true
 autorestart=true

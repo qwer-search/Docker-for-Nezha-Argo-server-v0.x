@@ -121,12 +121,16 @@ EOF
    DASH_VER=${DASH_VER:-'v0.17.9'}
    DASH_VER=$(add_v_prefix "$DASH_VER")
    echo "DASH_VER = $DASH_VER"
-   wget -O /tmp/dashboard.zip ${GH_PROXY}https://github.com/nezhahq/nezha/releases/download/${DASH_VER}/dashboard-linux-$ARCH.zip
-   unzip /tmp/dashboard.zip -d /tmp
-   if [ -s "/tmp/dist/dashboard-linux-${ARCH}" ]; then
-   mv -f /tmp/dist/dashboard-linux-$ARCH $WORK_DIR/app
+   if [ "$DASH_VER" = 'v0.17.9' ]; then
+     wget -O $WORK_DIR/app ${GH_PROXY}https://github.com/dsadsadsss/Docker-for-Nezha-Argo-server-v0.x/releases/download/nezha/nezha-dashboard-linux-amd64
    else
-   mv -f /tmp/dashboard-linux-$ARCH $WORK_DIR/app
+     wget -O /tmp/dashboard.zip ${GH_PROXY}https://github.com/nezhahq/nezha/releases/download/${DASH_VER}/dashboard-linux-$ARCH.zip
+     unzip /tmp/dashboard.zip -d /tmp
+     if [ -s "/tmp/dist/dashboard-linux-${ARCH}" ]; then
+      mv -f /tmp/dist/dashboard-linux-$ARCH $WORK_DIR/app
+     else
+     mv -f /tmp/dashboard-linux-$ARCH $WORK_DIR/app
+     fi
    fi
    else
    DASHBOARD_LATEST=$(wget -qO- "${GH_PROXY}https://api.github.com/repos/naiba/nezha/releases/latest" | awk -F '"' '/"tag_name"/{print $4}')

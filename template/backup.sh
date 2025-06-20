@@ -123,39 +123,8 @@ if [[ "${DASHBOARD_UPDATE}${CLOUDFLARED_UPDATE}${IS_BACKUP}${FORCE_UPDATE}" =~ t
     fi   
   fi
 
-  # 更新 cloudflared
-  if [[ "${CLOUDFLARED_UPDATE}${FORCE_UPDATE}" =~ 'true' ]]; then
-    hint "\n Renew Cloudflared to $CLOUDFLARED_LATEST \n"
-    wget -O /tmp/cloudflared ${GH_PROXY}https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-$ARCH && chmod +x /tmp/cloudflared
-    if [ -s /tmp/cloudflared ]; then
-      info "\n Restart Argo \n"
-      if [ "$IS_DOCKER" = 1 ]; then
-        supervisorctl stop argo >/dev/null 2>&1
-        mv -f /tmp/cloudflared $WORK_DIR/
-        supervisorctl start argo >/dev/null 2>&1
-      else
-        cmd_systemctl disable >/dev/null 2>&1
-        mv -f /tmp/cloudflared $WORK_DIR/
-        cmd_systemctl enable >/dev/null 2>&1
-      fi
-    fi
-  fi
-
   # 克隆备份仓库，压缩备份文件，上传更新
   if [ "$IS_BACKUP" = 'true' ]; then
-    # 备份前先停掉面板，设置 git 环境变量，减少系统开支
-    if [ "$IS_DOCKER" != 1 ]; then
-      cmd_systemctl disable >/dev/null 2>&1
-      git config --global core.bigFileThreshold 1k
-      git config --global core.compression 0
-      git config --global advice.detachedHead false
-      git config --global pack.threads 1
-      git config --global pack.windowMemory 50m
-    else
-      supervisorctl stop nezha >/dev/null 2>&1
-    fi
-    sleep 10
-
     # 克隆现有备份库
     [ -d /tmp/$GH_REPO ] && rm -rf /tmp/$GH_REPO
     git clone https://$GH_PAT@github.com/$GH_BACKUP_USER/$GH_REPO.git --depth 1 --quiet /tmp/$GH_REPO
@@ -190,12 +159,4 @@ if [[ "${DASHBOARD_UPDATE}${CLOUDFLARED_UPDATE}${IS_BACKUP}${FORCE_UPDATE}" =~ t
       fi
     fi
   fi
-fi
-
-if [ "$IS_DOCKER" = 1 ]; then
-  supervisorctl start nezha >/dev/null 2>&1
-  [ $(supervisorctl status all | grep -c "RUNNING") = $(grep -c '\[program:.*\]' /etc/supervisor/conf.d/damon.conf) ] && info "\n All programs started! \n" || error "\n Failed to start program! \n"
-else
-  cmd_systemctl enable >/dev/null 2>&1
-  [ "$(systemctl is-active nezha-dashboard)" = 'active' ] && info "\n Nezha dashboard started! \n" || error "\n Failed to start Nezha dashboard! \n"
 fi

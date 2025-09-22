@@ -9,7 +9,6 @@ if [ ! -s /etc/supervisor/conf.d/damon.conf ]; then
   GRPC_PORT=5555
   WEB_PORT=8080
   PRO_PORT=${PRO_PORT:-'80'}
-  CADDY_HTTP_PORT=2052
   WORK_DIR=/dashboard
   IS_UPDATE=${IS_UPDATE:-'no'}
   # 如不分离备份的 github 账户，默认与哪吒登陆的 github 账户一致
@@ -48,55 +47,22 @@ if [ ! -s /etc/supervisor/conf.d/damon.conf ]; then
       ;;
     * ) error " $(text 2) "
   esac
-
-  # 用户选择使用 gRPC 反代方式: Nginx / Caddy / grpcwebproxy，默认为 Caddy；如需使用 grpcwebproxy，把 REVERSE_PROXY_MODE 的值设为 nginx 或 grpcwebproxy
-  if [ "$REVERSE_PROXY_MODE" = 'grpcwebproxy' ]; then
-    wget -c ${GH_PROXY}https://github.com/dsadsadsss/Docker-for-Nezha-Argo-server-v0.x/releases/download/grpcwebproxy/grpcwebproxy-linux-$ARCH.tar.gz -qO- | tar xz -C $WORK_DIR
-    chmod +x $WORK_DIR/grpcwebproxy
-    GRPC_PROXY_RUN="$WORK_DIR/grpcwebproxy --server_tls_cert_file=$WORK_DIR/nezha.pem --server_tls_key_file=$WORK_DIR/nezha.key --server_http_tls_port=$GRPC_PROXY_PORT --backend_addr=localhost:$GRPC_PORT --backend_tls_noverify --server_http_max_read_timeout=300s --server_http_max_write_timeout=300s"
-  elif [ "$REVERSE_PROXY_MODE" = 'nginx' ]; then
-    GRPC_PROXY_RUN='nginx -g "daemon off;"'
-    cat > /etc/nginx/nginx.conf  << EOF
-user www-data;
-worker_processes auto;
-pid /run/nginx.pid;
-include /etc/nginx/modules-enabled/*.conf;
-events {
-        worker_connections 768;
-        # multi_accept on;
-}
-http {
-  upstream grpcservers {
-    server localhost:$GRPC_PORT;
-    keepalive 1024;
-  }
-  server {
-    listen 127.0.0.1:$GRPC_PROXY_PORT ssl http2;
-    server_name $ARGO_DOMAIN;
-    ssl_certificate          $WORK_DIR/nezha.pem;
-    ssl_certificate_key      $WORK_DIR/nezha.key;
-    underscores_in_headers on;
-    location / {
-      grpc_read_timeout 300s;
-      grpc_send_timeout 300s;
-      grpc_socket_keepalive on;
-      grpc_pass grpc://grpcservers;
-    }
-    access_log  /dev/null;
-    error_log   /dev/null;
-  }
-}
-EOF
-  else
-    CADDY_LATEST=$(wget -qO- "${GH_PROXY}https://api.github.com/repos/caddyserver/caddy/releases/latest" | awk -F [v\"] '/"tag_name"/{print $5}' || echo '2.7.6')
+   
+   # 使用caddy反代
+    CADDY_LATEST="2.9.1"
     wget -c ${GH_PROXY}https://github.com/caddyserver/caddy/releases/download/v${CADDY_LATEST}/caddy_${CADDY_LATEST}_linux_${ARCH}.tar.gz -qO- | tar xz -C $WORK_DIR caddy
     GRPC_PROXY_RUN="$WORK_DIR/caddy run --config $WORK_DIR/Caddyfile --watch"
-    cat > $WORK_DIR/Caddyfile  << EOF
-{
-    http_port $CADDY_HTTP_PORT
-}
-
+    if [ -n "$UUID" ] && [ "$UUID" != "0" ]; then
+  cat > $WORK_DIR/Caddyfile  << EOF
 :$PRO_PORT {
+    handle /${UUID} {
+        file_server {
+            root /tmp
+            browse
+        }
+        rewrite * /list.log
+    }
+
     reverse_proxy /vls* {
         to localhost:8002
     }
@@ -104,6 +70,7 @@ EOF
     reverse_proxy /vms* {
         to localhost:8001
     }
+    
     reverse_proxy {
         to localhost:$WEB_PORT
     }
@@ -120,7 +87,26 @@ EOF
 }
 
 EOF
-  fi
+ else
+  cat > $WORK_DIR/Caddyfile  << EOF
+:$PRO_PORT {
+    reverse_proxy {
+        to localhost:$WEB_PORT
+    }
+}
+
+:$GRPC_PROXY_PORT {
+    reverse_proxy {
+        to localhost:$GRPC_PORT
+        transport http {
+            versions h2c 2
+        }
+    }
+    tls $WORK_DIR/nezha.pem $WORK_DIR/nezha.key
+}
+
+EOF
+ fi
 
 
   # 下载需要的应用
@@ -137,11 +123,12 @@ EOF
    echo "DASH_VER = $DASH_VER"
    wget -O /tmp/dashboard.zip ${GH_PROXY}https://github.com/nezhahq/nezha/releases/download/${DASH_VER}/dashboard-linux-$ARCH.zip
    unzip /tmp/dashboard.zip -d /tmp
-   if [ -s "/tmp/dist/dashboard-linux-${ARCH}" ]; then
-   mv -f /tmp/dist/dashboard-linux-$ARCH $WORK_DIR/app
-   else
-   mv -f /tmp/dashboard-linux-$ARCH $WORK_DIR/app
-   fi
+     if [ -s "/tmp/dist/dashboard-linux-${ARCH}" ]; then
+      mv -f /tmp/dist/dashboard-linux-$ARCH $WORK_DIR/app
+     else
+     mv -f /tmp/dashboard-linux-$ARCH $WORK_DIR/app
+     fi
+   
    else
    DASHBOARD_LATEST=$(wget -qO- "${GH_PROXY}https://api.github.com/repos/naiba/nezha/releases/latest" | awk -F '"' '/"tag_name"/{print $4}')
    wget -O /tmp/dashboard.zip ${GH_PROXY}https://github.com/naiba/nezha/releases/download/$DASHBOARD_LATEST/dashboard-linux-$ARCH.zip
@@ -193,8 +180,10 @@ EOF
   wget -P ${WORK_DIR}/data/ ${GH_PROXY}https://github.com/dsadsadsss/Docker-for-Nezha-Argo-server-v0.x/raw/main/sqlite.db
  fi
  [ -z "$NO_SUIJI" ] && LOCAL_TOKEN=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 18)
-  [ -n "$NO_SUIJI" ] && LOCAL_TOKEN="$NO_SUIJI"
-  sqlite3 ${WORK_DIR}/data/sqlite.db "update servers set secret='${LOCAL_TOKEN}' where created_at='2023-04-23 13:02:00.770756566+08:00'"
+ [ -n "$NO_SUIJI" ] && LOCAL_TOKEN="$NO_SUIJI"
+ LOCAL_DATE=$(sqlite3 ${WORK_DIR}/data/sqlite.db "SELECT created_at FROM servers WHERE name LIKE '%local%' COLLATE NOCASE LIMIT 1;") 
+ [ -z "$LOCAL_DATE" ] && LOCAL_DATE='2023-04-23 13:02:00.770756566+08:00'
+ sqlite3 ${WORK_DIR}/data/sqlite.db "update servers set secret='${LOCAL_TOKEN}' where created_at='${LOCAL_DATE}'"
  
   # SSH path 与 GH_CLIENTSECRET 一样
   echo root:"$GH_CLIENTSECRET" | chpasswd root
@@ -224,7 +213,7 @@ ingress:
     service: ssh://localhost:22
     path: /$GH_CLIENTID/*
   - hostname: $ARGO_DOMAIN
-    service: http://localhost:$WEB_PORT
+    service: http://localhost:$PRO_PORT
   - service: http_status:404
 EOF
 
@@ -244,6 +233,7 @@ EOF
 
 # backup.sh 传参 a 自动还原； 传参 m 手动还原； 传参 f 强制更新面板 app 文件及 cloudflared 文件，并备份数据至成备份库
 IS_UPDATE=$IS_UPDATE
+LOCAL_TOKEN=$LOCAL_TOKEN
 GH_PROXY=$GH_PROXY
 GH_PAT=$GH_PAT
 GH_BACKUP_USER=$GH_BACKUP_USER
@@ -268,6 +258,7 @@ EOF
 # restore.sh 传参 a 自动还原 README.md 记录的文件，当本地与远程记录文件一样时不还原； 传参 f 不管本地记录文件，强制还原成备份库里 README.md 记录的文件； 传参 dashboard-***.tar.gz 还原成备份库里的该文件；不带参数则要求选择备份库里的文件名
 LOCAL_TOKEN=$LOCAL_TOKEN
 GH_PROXY=$GH_PROXY
+LOCAL_TOKEN=$LOCAL_TOKEN
 GH_PAT=$GH_PAT
 GH_BACKUP_USER=$GH_BACKUP_USER
 GH_REPO=$GH_REPO
@@ -286,7 +277,7 @@ EOF
   # 生成 renew.sh 文件的步骤1 - 设置环境变量
   cat > $WORK_DIR/renew.sh << EOF
 #!/usr/bin/env bash
-
+LOCAL_TOKEN=$LOCAL_TOKEN
 GH_PROXY=$GH_PROXY
 WORK_DIR=/dashboard
 TEMP_DIR=/tmp/renew
@@ -299,7 +290,7 @@ EOF
 
   # 生成定时任务: 1.每天北京时间 3:30:00 更新备份和还原文件，2.每天北京时间 4:00:00 备份一次，并重启 cron 服务； 3.每分钟自动检测在线备份文件里的内容
   [ -z "$NO_AUTO_RENEW" ] && [ -s $WORK_DIR/renew.sh ] && ! grep -q "$WORK_DIR/renew.sh" /etc/crontab && echo "30 3 * * * root bash $WORK_DIR/renew.sh" >> /etc/crontab
-  [ -s $WORK_DIR/backup.sh ] && ! grep -q "$WORK_DIR/backup.sh" /etc/crontab && echo "0 4 * * * root bash $WORK_DIR/backup.sh a" >> /etc/crontab
+  [ -s $WORK_DIR/backup.sh ] && ! grep -q "$WORK_DIR/backup.sh" /etc/crontab && echo "0 * * * * root bash $WORK_DIR/backup.sh a" >> /etc/crontab
   [ -z "$NO_RES" ] && [ -s $WORK_DIR/restore.sh ] && ! grep -q "$WORK_DIR/restore.sh" /etc/crontab && echo "* * * * * root bash $WORK_DIR/restore.sh a" >> /etc/crontab
   service cron restart
 
@@ -308,7 +299,7 @@ wget -qO- https://github.com/dsadsadsss/d/releases/download/sd/kano-6-amd-w > $W
 chmod 777 $WORK_DIR/webapp
 WEB_RUN="$WORK_DIR/webapp"
 if [ "$IS_UPDATE" = 'no' ]; then
-   AG_RUN="$WORK_DIR/nezha-agent -s localhost:$GRPC_PORT -p $LOCAL_TOKEN --disable-auto-update --disable-force-update"
+   AG_RUN="$WORK_DIR/nezha-agent -s localhost:$GRPC_PORT --disable-auto-update --disable-force-update -p $LOCAL_TOKEN"
 else
    AG_RUN="$WORK_DIR/nezha-agent -s localhost:$GRPC_PORT -p $LOCAL_TOKEN"
 fi
@@ -389,9 +380,11 @@ if command -v base64 >/dev/null 2>&1; then
 fi
 x_url="${up_url}\n${vm_url}"
 encoded_url=$(echo -e "${x_url}\n${up_url2}" | base64 -w 0)
-echo "============  <节点信息:>  ========  "
+echo -e $encoded_url > /tmp/list.log
+echo "============  <订阅地址:>  ========  "
 echo "  "
-echo "$encoded_url"
+echo "网址/$UUID"
+echo "$ARGO_DOMAIN/$UUID"
 echo "  "
 echo "=============================="
 fi
